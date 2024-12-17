@@ -19,14 +19,15 @@ LEFT JOIN genres g
 ON s.title = g.film
 )
 
-SELECT platform
-	   , count(*) AS total_films
-	   , SUM(CASE 
-			WHEN genre ILIKE '%kids%' OR genre ILIKE '%family%' OR genre ILIKE '%children%' THEN 1 
-			ELSE 0 END) AS total_family_friendly
-	   , (AVG(CASE 
-			WHEN genre ILIKE '%kids%' OR genre ILIKE '%family%' OR genre ILIKE '%children%' THEN 1 
-			ELSE 0 END) * 100) :: DECIMAL(10,2) AS pct_family_friendly
+SELECT 
+	platform
+	, count(*) AS total_films
+	, SUM(CASE 
+		WHEN genre ILIKE '%kids%' OR genre ILIKE '%family%' OR genre ILIKE '%children%' THEN 1 
+		ELSE 0 END) AS total_family_friendly
+	, (AVG(CASE 
+		WHEN genre ILIKE '%kids%' OR genre ILIKE '%family%' OR genre ILIKE '%children%' THEN 1 
+		ELSE 0 END) * 100) :: DECIMAL(10,2) AS pct_family_friendly
 FROM all_data
 GROUP BY platform
 ORDER BY pct_family_friendly desc
@@ -49,9 +50,10 @@ LEFT JOIN genres g
 ON s.title = g.film
 )
 
-SELECT platform
-	   , CASE WHEN type = 1 THEN 'TV' ELSE 'Movie' END as type
-	   , AVG(SPLIT_PART(rotten_tomatoes, '/', 1)::NUMERIC)::DECIMAL(10,2) as rt_score
+SELECT 
+	platform
+	, CASE WHEN type = 1 THEN 'TV' ELSE 'Movie' END as type
+	, AVG(SPLIT_PART(rotten_tomatoes, '/', 1)::NUMERIC)::DECIMAL(10,2) as rt_score
 FROM all_data
 GROUP BY platform, type
 ORDER BY rt_score desc
@@ -100,12 +102,13 @@ LEFT JOIN genres g
 ON s.title = g.film
 )
 
-SELECT platform
-	   , CASE WHEN type = 1 THEN 'TV' ELSE 'Movie' END as type
-	   , year
-       , AVG(SPLIT_PART(rotten_tomatoes, '/', 1)::NUMERIC)::DECIMAL(10,2) AS rt_score
-	   , AVG(SPLIT_PART(imdb, '/', 1)::NUMERIC * 10)::DECIMAL(10,2) AS imdb_score
-	   , AVG(SPLIT_PART(rotten_tomatoes, '/', 1)::NUMERIC-(SPLIT_PART(imdb, '/', 1)::NUMERIC * 10))::DECIMAL(10,2) AS avg_diff
+SELECT 
+	platform
+	, CASE WHEN type = 1 THEN 'TV' ELSE 'Movie' END as type
+	, year
+	, AVG(SPLIT_PART(rotten_tomatoes, '/', 1)::NUMERIC)::DECIMAL(10,2) AS rt_score
+	, AVG(SPLIT_PART(imdb, '/', 1)::NUMERIC * 10)::DECIMAL(10,2) AS imdb_score
+	, AVG(SPLIT_PART(rotten_tomatoes, '/', 1)::NUMERIC-(SPLIT_PART(imdb, '/', 1)::NUMERIC * 10))::DECIMAL(10,2) AS avg_diff
 FROM all_data
 WHERE rotten_tomatoes IS NOT NULL
 AND imdb IS NOT NULL
